@@ -1,26 +1,44 @@
-import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
-import history from './helpers/history';
-
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
 
 /*---Component imports---*/
-import PrivateRoute from './components/PrivateRoute';
+import AuthenticatedRoute from "./components/AuthenticatedRoute";
 /*---Component imports---*/
 
-
-/*---Page imports---*/
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
-
-/*---Page imports---*/
+/*---Routes---*/
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      isAuthenticated: false,
+      user: {}
+    };
+  }
+
+  userHasAuthenticated = authenticated => {
+    this.setState({ isAuthenticated: authenticated });
+  };
+
+  getUser = user => {
+    this.setState({ user: user });
+  };
+
   render() {
+    const childProps = {
+      isAuthenticated: this.state.isAuthenticated,
+      userHasAuthenticated: this.userHasAuthenticated
+    };
+
     return (
       <div className="App">
         <Switch>
-          <Route exact path='/' component={LoginPage} /> 
-          <Route path='/login' component={LoginPage} />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/" component={Dashboard} />
+          <Route component={NotFound} />
         </Switch>
       </div>
     );
