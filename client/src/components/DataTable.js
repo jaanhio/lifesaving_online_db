@@ -6,15 +6,16 @@ import Table, {
   TableBody,
   TableCell,
   TableFooter,
-  TableHead,
   TablePagination,
-  TableRow,
-  TableSortLabel
+  TableRow
 } from "material-ui/Table";
 import Checkbox from "material-ui/Checkbox";
+// import FormDialog from "./FormDialog";
 import { withStyles } from "material-ui/styles";
 import axios from "axios";
-import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+import EditIcon from "material-ui-icons/ModeEdit";
+import EditForm from "./EditForm";
 
 const styles = theme => ({
   root: {
@@ -38,7 +39,8 @@ class DataTable extends Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: 5
+      rowsPerPage: 5,
+      currentEdit: null
     };
   }
 
@@ -51,6 +53,24 @@ class DataTable extends Component {
     //   this.setState({ data: res.data });
     // });
   }
+
+  updateData = () => {
+    axios.get("http://localhost:5000/athlete").then(res => {
+      this.setState({ data: res.data });
+    });
+  };
+
+  handleOpenEdit = (event, id) => {
+    this.setState({
+      currentEdit: id
+    });
+  };
+
+  handleCloseEdit = () => {
+    this.setState({
+      currentEdit: null
+    });
+  };
 
   handleRequestSort = (event, property) => {
     const orderBy = property;
@@ -76,7 +96,7 @@ class DataTable extends Component {
     this.setState({ selected: [] });
   };
 
-  handleClick = (event, id) => {
+  handleClick = id => {
     const { selected } = this.state;
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -113,12 +133,28 @@ class DataTable extends Component {
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+    const OpenEditForm = Boolean(this.state.currentEdit) ? null : (
+      <EditForm
+        currentEdit={this.state.currentEdit}
+        handleCloseEdit={this.handleCloseEdit}
+      />
+    );
+
     return (
       <div
-        style={{ position: "absolute", top: "7%", left: "19%", width: "70vw" }}
+        style={{
+          position: "absolute",
+          top: "5%",
+          left: "10.2vw",
+          width: "89vw"
+        }}
       >
         <Paper className={classes.root}>
-          <TableToolBar numSelected={selected.length} currentCat={currentCat} />
+          <TableToolBar
+            numSelected={selected.length}
+            currentCat={currentCat}
+            updateData={this.updateData}
+          />
           <div className={classes.tableWrapper}>
             <Table className={classes.table}>
               <TableHeader
@@ -137,7 +173,7 @@ class DataTable extends Component {
                     return (
                       <TableRow
                         hover
-                        onClick={event => this.handleClick(event, n.id)}
+                        // onClick={event => this.handleClick(event, n.id)}
                         role="checkbox"
                         aria-checked={isSelected}
                         tabIndex={-1}
@@ -145,13 +181,23 @@ class DataTable extends Component {
                         selected={isSelected}
                       >
                         <TableCell padding="checkbox">
-                          <Checkbox checked={isSelected} />
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={() => this.handleClick(n.id)}
+                          />
                         </TableCell>
                         <TableCell padding="none">{n.id}</TableCell>
                         <TableCell numeric>{n.firstname}</TableCell>
                         <TableCell numeric>{n.lastname}</TableCell>
                         <TableCell numeric>{n.dob}</TableCell>
                         <TableCell numeric>{n.gender}</TableCell>
+                        <TableCell numeric>
+                          <IconButton
+                            onClick={event => this.handleOpenEdit(event, n.id)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -164,7 +210,7 @@ class DataTable extends Component {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    colSpan={6}
+                    colSpan={7}
                     count={data.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
@@ -182,6 +228,11 @@ class DataTable extends Component {
             </Table>
           </div>
         </Paper>
+        <EditForm
+          currentEdit={this.state.currentEdit}
+          handleCloseEdit={this.handleCloseEdit}
+          updateData={this.updateData}
+        />
       </div>
     );
   }

@@ -1,27 +1,16 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
 import classNames from "classnames";
 import Typography from "material-ui/Typography";
-import Table, {
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel
-} from "material-ui/Table";
 import Toolbar from "material-ui/Toolbar";
 import IconButton from "material-ui/IconButton";
 import Tooltip from "material-ui/Tooltip";
-import Paper from "material-ui/Paper";
 import { withStyles } from "material-ui/styles";
 import styled from "styled-components";
 import { lighten } from "material-ui/styles/colorManipulator";
-
 import DeleteIcon from "material-ui-icons/Delete";
-import FilterListIcon from "material-ui-icons/FilterList";
 import AddIcon from "material-ui-icons/Add";
+
+import NewForm from "./NewForm";
 
 const toolbarStyles = theme => ({
   root: {
@@ -48,44 +37,68 @@ const toolbarStyles = theme => ({
   }
 });
 
-let TableToolBar = props => {
-  const { numSelected, classes, currentCat } = props;
+class TableToolBar extends Component {
+  constructor() {
+    super();
+    this.state = {
+      openDialog: false
+    };
+  }
 
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subheading">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="title">{currentCat}</Typography>
-        )}
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Add Athlete">
-            <Link to="/add">
-              <IconButton aria-label="Add Athlete">
+  handleOpenForm = () => {
+    this.setState({ openDialog: true });
+  };
+
+  handleCloseForm = () => {
+    this.setState({ openDialog: false });
+  };
+
+  render() {
+    const { numSelected, classes, currentCat } = this.props;
+
+    return (
+      <Toolbar
+        className={classNames(classes.root, {
+          [classes.highlight]: numSelected > 0
+        })}
+      >
+        <div className={classes.title}>
+          {numSelected > 0 ? (
+            <Typography color="inherit" variant="subheading">
+              {numSelected} selected
+            </Typography>
+          ) : (
+            <Typography variant="title">{currentCat}</Typography>
+          )}
+        </div>
+        <div className={classes.spacer} />
+        <div className={classes.actions}>
+          {numSelected > 0 ? (
+            <Tooltip title="Delete">
+              <IconButton aria-label="Delete">
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Add Athlete">
+              <IconButton
+                aria-label="Add Athlete"
+                onClick={this.handleOpenForm}
+              >
                 <AddIcon />
               </IconButton>
-            </Link>
-          </Tooltip>
-        )}
-      </div>
-    </Toolbar>
-  );
-};
+            </Tooltip>
+          )}
+        </div>
+        <NewForm
+          openDialog={this.state.openDialog}
+          handleCloseForm={this.handleCloseForm}
+          handleOpenForm={this.handleOpenForm}
+          updateData={this.props.updateData}
+        />
+      </Toolbar>
+    );
+  }
+}
 
 export default withStyles(toolbarStyles)(TableToolBar);

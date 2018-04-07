@@ -5,7 +5,7 @@ import IconButton from "material-ui/IconButton";
 import Button from "material-ui/Button";
 import Visibility from "material-ui-icons/Visibility";
 import VisibilityOff from "material-ui-icons/VisibilityOff";
-
+import Footer from "../components/LoginPageFooter";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -21,6 +21,17 @@ const LoginWrapper = styled.div`
 
 const LoginHeaderWrapper = styled.h1`
   font-weight: 300;
+  width: 300px;
+  text-align: center;
+  position: absolute;
+  top: 20%;
+`;
+
+const LoginFormWrapper = styled.form`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 35%;
 `;
 
 class LoginPage extends Component {
@@ -173,11 +184,7 @@ class LoginPage extends Component {
         <LoginHeaderWrapper>
           Singapore Lifesaving Online Database
         </LoginHeaderWrapper>
-        <form
-          style={{ display: "flex", flexDirection: "column" }}
-          autoComplete="off"
-          onSubmit={this.handleSubmit}
-        >
+        <LoginFormWrapper autoComplete="off" onSubmit={this.handleSubmit}>
           {emailInputField}
           {passwordInputField}
           <Button
@@ -193,7 +200,8 @@ class LoginPage extends Component {
           >
             Log In
           </Button>
-        </form>
+        </LoginFormWrapper>
+        <Footer />
       </LoginWrapper>
     );
   }

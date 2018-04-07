@@ -7,8 +7,8 @@ module.exports = (app, passport, db) => {
     // console.log(inputDetails);
     let inputEmail = [inputDetails.email];
     let inputPW = inputDetails.password;
-    let queryString = "SELECT * from admin where email = $1";
-    db.query(queryString, inputEmail, (error, queryResult) => {
+    let sql = "SELECT * from admin where email = $1";
+    db.query(sql, inputEmail, (error, queryResult) => {
       if (error) {
         throw error;
       }
@@ -49,10 +49,10 @@ module.exports = (app, passport, db) => {
     let { firstname, lastname, dob, gender } = request.body;
     console.log("input details below");
     console.log(request.body);
-    let queryString =
+    let sql =
       "INSERT into athletes (firstname, lastname, gender, dob) values ($1, $2, $3, $4)";
     let values = [firstname, lastname, gender, dob];
-    db.query(queryString, values, (error, queryResult) => {
+    db.query(sql, values, (error, queryResult) => {
       if (error) {
         console.log(error.stack);
       } else {
@@ -62,13 +62,45 @@ module.exports = (app, passport, db) => {
   });
 
   app.get("/athlete", (request, response) => {
-    let queryString = "SELECT * from athletes";
-    db.query(queryString, (error, queryResult) => {
+    let sql =
+      "SELECT id, firstname, lastname, to_char(dob, 'YYYY-MM-DD') as dob, gender from athletes";
+    db.query(sql, (error, queryResult) => {
       if (error) {
         console.log(error.stack);
       } else {
-        // console.log(queryResult.rows);
         response.send(queryResult.rows);
+      }
+    });
+  });
+
+  app.get("/athlete/:id", (request, response) => {
+    let sql =
+      "SELECT id, firstname, lastname, to_char(dob, 'YYYY-MM-DD') as dob, gender from athletes where id = $1";
+    let { id } = request.params;
+    db.query(sql, [id], (error, queryResult) => {
+      if (error) {
+        console.log(error.stack);
+      } else {
+        response.send(queryResult.rows);
+      }
+    });
+  });
+
+  app.post("/athlete/:id/update", (request, response) => {
+    let sql =
+      "UPDATE athletes set firstname = $1, lastname = $2, dob = $3, gender = $4 where id = $5";
+    let { firstname, lastname, dob, gender } = request.body;
+    let { id } = request.params;
+    let values = [firstname, lastname, dob, gender, id];
+    console.log(values);
+    // console.log(body);
+    console.log(id);
+    db.query(sql, values, (error, queryResult) => {
+      if (error) {
+        console.log(error.stack);
+      } else {
+        console.log("Successfully updated athlete");
+        response.send("Successfully updated athlete");
       }
     });
   });

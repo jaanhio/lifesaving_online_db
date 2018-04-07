@@ -1,18 +1,16 @@
 import React, { Component } from "react";
-import {
-  FormControl,
-  FormHelperText,
-  FormControlLabel,
-  FormLabel
-} from "material-ui/Form";
-import Input, { InputLabel } from "material-ui/Input";
+import { FormControl, FormControlLabel, FormLabel } from "material-ui/Form";
 import TextField from "material-ui/TextField";
-import Paper from "material-ui/Paper";
 import Radio, { RadioGroup } from "material-ui/Radio";
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from "material-ui/Dialog";
 import Button from "material-ui/Button";
 import axios from "axios";
 
-class Form extends Component {
+class NewForm extends Component {
   constructor() {
     super();
 
@@ -25,6 +23,10 @@ class Form extends Component {
   }
 
   handleChange = prop => e => {
+    // if (prop === "dob") {
+    //   console.log(e.target.value.toLocaleDateString());
+    // }
+    console.log(e.target.value);
     this.setState({ [prop]: e.target.value });
   };
 
@@ -41,34 +43,28 @@ class Form extends Component {
       })
       .then(res => {
         console.log(res);
-        this.props.history.push("/athletes");
+        this.props.updateData();
+        this.props.handleCloseForm();
+        this.setState({
+          firstName: "",
+          lastName: "",
+          dob: "",
+          gender: ""
+        });
       });
   };
 
   render() {
     return (
-      <div style={{ position: "absolute", top: "10%", left: "30%" }}>
-        <Paper
-          style={{
-            width: 500,
-            height: 350,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
+      <div>
+        <Dialog
+          open={this.props.openDialog}
+          onClose={this.props.handleCloseForm}
+          aria-labelledby="form-dialog-title"
         >
-          <form
-            onSubmit={this.handleSubmit}
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <FormControl
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
+          <DialogTitle id="form-dialog-title">Insert New Athlete</DialogTitle>
+          <DialogContent>
+            <FormControl>
               <TextField
                 label="First Name"
                 value={this.state.firstName}
@@ -88,14 +84,17 @@ class Form extends Component {
                 InputLabelProps={{ shrink: true }}
                 onChange={this.handleChange("dob")}
                 style={{ width: 350 }}
+                value={this.state.dob}
               />
-              <FormLabel component="legend">Gender</FormLabel>
+              <FormLabel component="legend" style={{ margin: "10px 0" }}>
+                Gender
+              </FormLabel>
               <RadioGroup
                 aria-label="gender"
                 name="gender"
                 value={this.state.gender}
                 onChange={this.handleChange("gender")}
-                style={{ flexDirection: "row" }}
+                style={{ flexDirection: "row", marginTop: -15 }}
               >
                 <FormControlLabel
                   value="male"
@@ -109,14 +108,16 @@ class Form extends Component {
                 />
               </RadioGroup>
             </FormControl>
-            <Button variant="raised" type="submit" value="submit">
+          </DialogContent>
+          <DialogActions>
+            <Button type="submit" value="submit" onClick={this.handleSubmit}>
               Submit
             </Button>
-          </form>
-        </Paper>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
 }
 
-export default Form;
+export default NewForm;
