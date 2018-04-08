@@ -44,7 +44,7 @@ class NavBar extends Component {
       <div>
         <AppBar
           position="fixed"
-          style={{ backgroundColor: "white", zIndex: 9999 }}
+          style={{ backgroundColor: "white", zIndex: 1201 }}
         >
           <Toolbar>
             <Link to="/" style={{ textDecoration: "none" }}>

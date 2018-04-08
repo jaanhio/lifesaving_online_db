@@ -104,4 +104,41 @@ module.exports = (app, passport, db) => {
       }
     });
   });
+
+  app.post("/athlete/delete", async (request, response) => {
+    let sql = "DELETE from athletes where id = $1";
+    let { selected } = request.body;
+    console.log("this is from routes");
+    console.log(selected);
+    const result = selected.map(async id => {
+      await db.query(sql, [id], (error, queryResult) => {
+        if (error) {
+          // return response.send(error);
+          console.log(error);
+          return error;
+        } else {
+          // return response.send(`Successfully deleted athlete id: ${id}`);
+          console.log("Success");
+          return ["Success"];
+        }
+      });
+    });
+    const finalResult = await Promise.all(result);
+    response.send(result);
+  });
+
+  // app.post("/athlete/delete", async (request, response) => {
+  //   let { selected } = request.body;
+  //   let sql = `DELETE from athletes where id in ($1)`;
+  //   console.log("this is from routes");
+  //   console.log(selected);
+  //   db.query(sql, selected, (error, queryResult) => {
+  //     if (error) {
+  //       console.log(error);
+  //       response.send(error);
+  //     } else {
+  //       response.send("Success");
+  //     }
+  //   });
+  // });
 };

@@ -8,6 +8,7 @@ import GroupIcon from "material-ui-icons/Group";
 import DateRangeIcon from "material-ui-icons/DateRange";
 import PoolIcon from "material-ui-icons/Pool";
 import AssignmentIcon from "material-ui-icons/Assignment";
+import zIndex from "material-ui/styles/zIndex";
 
 class FixedDrawer extends Component {
   constructor() {
@@ -17,7 +18,7 @@ class FixedDrawer extends Component {
 
   render() {
     return (
-      <Drawer variant="permanent">
+      <Drawer variant="permanent" elevation={10}>
         <List component="nav" style={{ top: 65 }}>
           <ListItem button>
             <ListItemIcon>

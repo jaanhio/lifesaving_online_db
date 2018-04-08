@@ -45,6 +45,10 @@ class TableToolBar extends Component {
     };
   }
 
+  handleDeleteIcon = () => {
+    console.log("delete button pressed");
+  };
+
   handleOpenForm = () => {
     this.setState({ openDialog: true });
   };
@@ -75,7 +79,7 @@ class TableToolBar extends Component {
         <div className={classes.actions}>
           {numSelected > 0 ? (
             <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
+              <IconButton aria-label="Delete" onClick={this.props.handleDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>

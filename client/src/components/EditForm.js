@@ -124,14 +124,6 @@ class EditForm extends Component {
             <Button type="submit" value="submit" onClick={this.handleUpdate}>
               Update
             </Button>
-            <Button
-              type="submit"
-              value="submit"
-              color="secondary"
-              onClick={this.handleSubmit}
-            >
-              Delete
-            </Button>
           </DialogActions>
         </Dialog>
       </div>

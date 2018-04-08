@@ -8,6 +8,7 @@ import Dialog, {
   DialogTitle
 } from "material-ui/Dialog";
 import Button from "material-ui/Button";
+import SnackBar from "material-ui/Snackbar";
 import axios from "axios";
 
 class NewForm extends Component {
@@ -18,16 +19,20 @@ class NewForm extends Component {
       firstName: "",
       lastName: "",
       dob: "",
-      gender: ""
+      gender: "",
+      openAddSnack: false
     };
   }
 
   handleChange = prop => e => {
-    // if (prop === "dob") {
-    //   console.log(e.target.value.toLocaleDateString());
-    // }
     console.log(e.target.value);
     this.setState({ [prop]: e.target.value });
+  };
+
+  handleCloseAddSnack = () => {
+    this.setState({
+      openAddSnack: false
+    });
   };
 
   handleSubmit = e => {
@@ -49,7 +54,8 @@ class NewForm extends Component {
           firstName: "",
           lastName: "",
           dob: "",
-          gender: ""
+          gender: "",
+          openAddSnack: true
         });
       });
   };
@@ -115,6 +121,19 @@ class NewForm extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <SnackBar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          autoHideDuration={2500}
+          open={this.state.openAddSnack}
+          onClose={this.handleCloseAddSnack}
+          SnackbarContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={<span id="message-id">Athlete successfully added!</span>}
+          style={{
+            zIndex: 1202
+          }}
+        />
       </div>
     );
   }

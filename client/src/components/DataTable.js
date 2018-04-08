@@ -14,6 +14,7 @@ import Checkbox from "material-ui/Checkbox";
 import { withStyles } from "material-ui/styles";
 import axios from "axios";
 import IconButton from "material-ui/IconButton";
+import SnackBar from "material-ui/Snackbar";
 import EditIcon from "material-ui-icons/ModeEdit";
 import EditForm from "./EditForm";
 
@@ -40,7 +41,8 @@ class DataTable extends Component {
       data: [],
       page: 0,
       rowsPerPage: 5,
-      currentEdit: null
+      currentEdit: null,
+      openDeleteSnack: false
     };
   }
 
@@ -127,6 +129,32 @@ class DataTable extends Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  handleCloseDeleteSnack = () => {
+    this.setState({
+      openDeleteSnack: false
+    });
+  };
+
+  handleDelete = () => {
+    // e.preventDefault();
+    console.log("delete button clicked");
+    axios
+      .post("http://localhost:5000/athlete/delete", {
+        selected: this.state.selected
+      })
+      .then(res => {
+        console.log(res);
+        this.setState({
+          selected: [],
+          openDeleteSnack: true
+        });
+        this.updateData();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   render() {
     const { classes, currentCat } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
@@ -144,9 +172,9 @@ class DataTable extends Component {
       <div
         style={{
           position: "absolute",
-          top: "5%",
-          left: "10.2vw",
-          width: "89vw"
+          top: 44,
+          left: 199,
+          width: "calc(100vw - 199px)"
         }}
       >
         <Paper className={classes.root}>
@@ -154,6 +182,7 @@ class DataTable extends Component {
             numSelected={selected.length}
             currentCat={currentCat}
             updateData={this.updateData}
+            handleDelete={this.handleDelete}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table}>
@@ -232,6 +261,19 @@ class DataTable extends Component {
           currentEdit={this.state.currentEdit}
           handleCloseEdit={this.handleCloseEdit}
           updateData={this.updateData}
+        />
+        <SnackBar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          autoHideDuration={2500}
+          open={this.state.openDeleteSnack}
+          onClose={this.handleCloseDeleteSnack}
+          SnackbarContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={<span id="message-id">Deletion successful!</span>}
+          style={{
+            zIndex: 1202
+          }}
         />
       </div>
     );
