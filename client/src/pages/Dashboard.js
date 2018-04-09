@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 /*---import components---*/
 import NavBar from "../components/NavBar";
@@ -10,16 +10,21 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: "admin",
+      user: "",
       currentCategory: "Athletes"
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let token = localStorage.getItem("jwtToken");
+    let user = localStorage.getItem("user");
     if (!token) {
       console.log("not logged in");
       this.props.history.push("/login");
+    } else {
+      this.setState({
+        user: user
+      });
     }
   }
 
@@ -39,4 +44,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default withRouter(Dashboard);

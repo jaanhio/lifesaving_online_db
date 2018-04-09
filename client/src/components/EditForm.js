@@ -9,6 +9,8 @@ import Dialog, {
 } from "material-ui/Dialog";
 import Button from "material-ui/Button";
 import axios from "axios";
+import SnackBar from "material-ui/Snackbar";
+import { LinearProgress, CircularProgress } from "material-ui/Progress";
 
 class EditForm extends Component {
   constructor() {
@@ -19,11 +21,17 @@ class EditForm extends Component {
       lastName: "",
       dob: "",
       gender: "",
-      id: null
+      id: null,
+      openEditSnack: false,
+      loading: false,
+      isPopulatingForm: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    this.setState({
+      isPopulatingForm: true
+    });
     if (nextProps.currentEdit !== this.props.currentEdit) {
       let params = nextProps.currentEdit;
       axios.get(`http://localhost:5000/athlete/${params}`).then(res => {
@@ -34,11 +42,18 @@ class EditForm extends Component {
           lastName: res.data[0].lastname,
           dob: res.data[0].dob,
           gender: res.data[0].gender,
-          id: res.data[0].id
+          id: res.data[0].id,
+          isPopulatingForm: false
         });
       });
     }
   }
+
+  handleCloseEditSnack = () => {
+    this.setState({
+      openEditSnack: false
+    });
+  };
 
   handleChange = prop => e => {
     this.setState({ [prop]: e.target.value });
@@ -47,6 +62,9 @@ class EditForm extends Component {
   handleUpdate = e => {
     console.log("updating athlete's particulars");
     e.preventDefault();
+    this.setState({
+      loading: true
+    });
     let { firstName, lastName, dob, gender, id } = this.state;
     axios
       .post(`http://localhost:5000/athlete/${id}/update`, {
@@ -56,7 +74,10 @@ class EditForm extends Component {
         gender: gender
       })
       .then(res => {
-        console.log(res);
+        this.setState({
+          openEditSnack: true,
+          loading: false
+        });
         this.props.updateData();
         this.props.handleCloseEdit();
       });
@@ -73,6 +94,25 @@ class EditForm extends Component {
           onClose={this.props.handleCloseEdit}
           aria-labelledby="form-dialog-title"
         >
+          {this.state.isPopulatingForm && (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 9999,
+                backgroundColor: "rgba(0,0,0,0.5)"
+              }}
+            >
+              <CircularProgress size={68} />
+            </div>
+          )}
           <DialogTitle id="form-dialog-title">Insert New Athlete</DialogTitle>
           <DialogContent>
             <FormControl>
@@ -125,7 +165,30 @@ class EditForm extends Component {
               Update
             </Button>
           </DialogActions>
+          <div
+            style={{
+              flexGrow: 1,
+              bottom: "0%",
+              position: "absolute",
+              width: "30vw"
+            }}
+          >
+            {this.state.loading && <LinearProgress value={0} />}
+          </div>
         </Dialog>
+        <SnackBar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          autoHideDuration={1800}
+          open={this.state.openEditSnack}
+          onClose={this.handleCloseEditSnack}
+          SnackbarContentProps={{ "aria-describedby": "message-id" }}
+          message={
+            <span id="message-id">
+              {this.state.firstName}'s profile updated!
+            </span>
+          }
+          style={{ zIndex: 1202 }}
+        />
       </div>
     );
   }

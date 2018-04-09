@@ -15,7 +15,7 @@ class App extends Component {
     super();
     this.state = {
       isAuthenticated: false,
-      user: {}
+      user: ""
     };
   }
 
@@ -36,8 +36,13 @@ class App extends Component {
     return (
       <div className="App">
         <Switch>
-          <Route path="/login" component={LoginPage} />
-          <Route path="/" component={Dashboard} />
+          {/*<Route path="/login" component={LoginPage} /> */}
+          <Route
+            path="/login"
+            render={() => <LoginPage getUser={this.getUser} />}
+          />
+          {/*<Route path="/" component={Dashboard} />*/}
+          <Route path="/" render={() => <Dashboard user={this.state.user} />} />
           <Route component={NotFound} />
         </Switch>
       </div>

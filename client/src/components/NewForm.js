@@ -9,6 +9,7 @@ import Dialog, {
 } from "material-ui/Dialog";
 import Button from "material-ui/Button";
 import SnackBar from "material-ui/Snackbar";
+import { LinearProgress } from "material-ui/Progress";
 import axios from "axios";
 
 class NewForm extends Component {
@@ -20,7 +21,8 @@ class NewForm extends Component {
       lastName: "",
       dob: "",
       gender: "",
-      openAddSnack: false
+      openAddSnack: false,
+      loading: false
     };
   }
 
@@ -38,6 +40,9 @@ class NewForm extends Component {
   handleSubmit = e => {
     console.log("submitting form");
     e.preventDefault();
+    this.setState({
+      loading: true
+    });
     let { firstName, lastName, dob, gender } = this.state;
     axios
       .post("http://localhost:5000/athlete", {
@@ -55,7 +60,8 @@ class NewForm extends Component {
           lastName: "",
           dob: "",
           gender: "",
-          openAddSnack: true
+          openAddSnack: true,
+          loading: false
         });
       });
   };
@@ -120,19 +126,25 @@ class NewForm extends Component {
               Submit
             </Button>
           </DialogActions>
+          <div
+            style={{
+              flexGrow: 1,
+              bottom: "0%",
+              position: "absolute",
+              width: "30vw"
+            }}
+          >
+            {this.state.loading && <LinearProgress value={0} />}
+          </div>
         </Dialog>
         <SnackBar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          autoHideDuration={2500}
+          autoHideDuration={1800}
           open={this.state.openAddSnack}
           onClose={this.handleCloseAddSnack}
-          SnackbarContentProps={{
-            "aria-describedby": "message-id"
-          }}
+          SnackbarContentProps={{ "aria-describedby": "message-id" }}
           message={<span id="message-id">Athlete successfully added!</span>}
-          style={{
-            zIndex: 1202
-          }}
+          style={{ zIndex: 1202 }}
         />
       </div>
     );

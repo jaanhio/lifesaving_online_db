@@ -37,7 +37,7 @@ class NavBar extends Component {
   };
 
   render() {
-    const { anchorEl, user } = this.state;
+    const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -60,7 +60,7 @@ class NavBar extends Component {
               style={{ fontWeight: 100, width: "100vw" }}
               align="right"
             >
-              Welcome, {user}
+              Welcome, {this.props.user}
             </Typography>
             <div>
               <IconButton aria-haspopup="true" onClick={this.handleMenu}>

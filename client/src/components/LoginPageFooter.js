@@ -2,9 +2,9 @@ import React from "react";
 
 const links = ["Terms", "Privacy", "Legal", "Contact SLSS"];
 
-const renderLinks = links.map(link => {
+const renderLinks = links.map((link, id) => {
   return (
-    <li style={{ margin: "0 30px" }}>
+    <li key={id} style={{ margin: "0 30px" }}>
       <a
         href="#"
         style={{ textDecoration: "none", color: "#878787", fontWeight: 100 }}

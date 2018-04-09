@@ -4,10 +4,12 @@ import Input, { InputAdornment, InputLabel } from "material-ui/Input";
 import IconButton from "material-ui/IconButton";
 import Button from "material-ui/Button";
 import Visibility from "material-ui-icons/Visibility";
+import { LinearProgress } from "material-ui/Progress";
 import VisibilityOff from "material-ui-icons/VisibilityOff";
 import Footer from "../components/LoginPageFooter";
 import styled from "styled-components";
 import axios from "axios";
+import { withRouter } from "react-router-dom";
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -46,7 +48,8 @@ class LoginPage extends Component {
       passwordEmpty: false,
       loading: false,
       submitSuccess: false,
-      showPassword: false
+      showPassword: false,
+      loading: false
     };
   }
 
@@ -64,6 +67,7 @@ class LoginPage extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    this.setState({ loading: true });
     let emailInputLength = this.state.email.length;
     console.log(emailInputLength);
     let passwordInputLength = this.state.password.length;
@@ -83,10 +87,13 @@ class LoginPage extends Component {
           password: this.state.password
         })
         .then(res => {
+          console.log(res.data);
           if (res.data.token) {
             // if authentication successful, set jwt and redirect to home page
             localStorage.setItem("jwtToken", res.data.token);
+            localStorage.setItem("user", res.data.firstName);
             // this.props.userHasAuthenticated(true);
+            this.props.getUser(res.data.firstname);
             this.props.history.push("/");
           } else {
             if (res.data.error === "email") {
@@ -201,10 +208,20 @@ class LoginPage extends Component {
             Log In
           </Button>
         </LoginFormWrapper>
+        <div
+          style={{
+            flexGrow: 1,
+            top: "49%",
+            position: "absolute",
+            width: "26vw"
+          }}
+        >
+          {this.state.loading && <LinearProgress value={0} />}
+        </div>
         <Footer />
       </LoginWrapper>
     );
   }
 }
 
-export default LoginPage;
+export default withRouter(LoginPage);

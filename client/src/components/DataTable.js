@@ -264,7 +264,7 @@ class DataTable extends Component {
         />
         <SnackBar
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          autoHideDuration={2500}
+          autoHideDuration={1800}
           open={this.state.openDeleteSnack}
           onClose={this.handleCloseDeleteSnack}
           SnackbarContentProps={{
